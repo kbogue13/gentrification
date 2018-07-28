@@ -3,7 +3,7 @@
 It is expected that you have read the README accompanying this script before running it.
 
 For this script to run you must have the Google Chrome web browser as well as the python libraries for
-selenium, zipfile, pandas and geopandas installed.
+selenium, pandas and geopandas installed.
 
 Additionally, you will need a Chrome webdriver. One has been provided for you in the GitHub repository or your own can be found
 at https://sites.google.com/a/chromium.org/chromedriver/downloads
