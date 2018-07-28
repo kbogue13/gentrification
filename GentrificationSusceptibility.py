@@ -46,6 +46,7 @@ while True:
         pass
     if os.path.exists(dPath)==False:
         print ('The provided folder does not exist')
+        print (r'The path should be similar to C:\Users\YOURNAME\Downloads')
         print ('Please try again')
         continue
     if dPath.endswith('Downloads') == True:
@@ -56,6 +57,9 @@ while True:
         if os.path.exists(dPath) == True:
             break
         else:
+            print('Invalid path')
+            print (r'The path should be similar to C:\Users\YOURNAME\Downloads')
+            print('Please try again')
             continue
 
 downloadPath = dPath
@@ -63,7 +67,7 @@ downloadPath = dPath
 #User provide path to Chrome driver
 while True:
     try:
-        cPath = input(r'Please enter the FULL path to the Google Chrome web driver (including \chromedriver.exe): ')
+        cPath = input(r'Please enter the path to the Google Chrome web driver: ')
         if os.path.exists(cPath) == True:
             pass
         if cPath.endswith('chromedriver.exe') == True:
@@ -76,33 +80,23 @@ while True:
         print ('Please try again')
         continue
     if (cPath.endswith('chromedriver.exe')) == False:
-        print ("Don't forget to include \chromeDriver.exe in the path")
-        print ('Please try again')
-        continue
+        cPath = cPath + '\chromedriver.exe'
+        pass
+        if os.path.exists(cPath) == True:
+            print ('Please wait...')
+            break
+        else:
+            print ('The provided path is invalid')
+            print ('Please try again')
+            continue
 
 chromePath = cPath
 
 driver = webdriver.Chrome(chromePath)
 
-#minimize window
-#driver.set_window_position(-2000,0)
-
-#time how long the code takes
-start = time.time()
-#Delete files in 'Downloads folder
-
-folder = downloadPath
-for the_file in os.listdir(folder):
-    file_path = os.path.join(folder, the_file)
-    try:
-        if os.path.isfile(file_path):
-            os.unlink(file_path)
-        #elif os.path.isdir(file_path): shutil.rmtree(file_path)
-    except Exception as e:
-        print(e)
 #functions making selenium wait for specific circumstances
 
-def smallWait():
+def smallWait(): #This is just a general wait of .33 seconds
     timeout = .33 #second
     try:
         element_present = EC.presence_of_element_located((By.XPATH, '//*[@id="filterDimensionListId'))
@@ -110,7 +104,7 @@ def smallWait():
     except TimeoutException:
         pass
 
-def medWait():
+def medWait(): #This is just a general wait of 1 second
     timeout = 1 #second
     try:
         element_present = EC.presence_of_element_located((By.XPATH, '//*[@id="filterDimensionListId'))
@@ -118,25 +112,13 @@ def medWait():
     except TimeoutException:
         pass
 
-def wait():
-    timeout =  100#second
+def wait(): #Waits for the loading screen to disappear before proceeding
+    timeout =  100 #seconds
     element_present = EC.presence_of_element_located((By.XPATH, '//*[@id="dummy"]'))
     smallWait()
     if element_present == True:
         WebDriverWait(driver, timeout).until(element_present == False)
         smallWait()
-
-def nextButtonWait(): #this is for a specific next button
-    timeout = .01
-    while True:
-        try:
-            element_present = EC.element_to_be_clickable((By.XPATH, '''//*[@id="nextButton"]'''))
-            WebDriverWait(driver, timeout).until(element_present)
-            break
-        except TimeoutException:
-            pass
-        if element_present == False:
-            WebDriverWait(driver, timeout).until(element_present)
 
 def downloadWait(): #continually checks for 'download' button to be clickable
     timeout = .01 #seconds
@@ -150,6 +132,8 @@ def downloadWait(): #continually checks for 'download' button to be clickable
         if element_present == False:
             WebDriverWait(driver, timeout).until(element_present)
 
+#time how long the code takes
+start = time.time()
 
 '''Make driver navigate to American Fact Finder Download Center and download data'''
 
@@ -185,7 +169,7 @@ driver.find_element_by_xpath('''//*[@id="summaryLevel"]/option[15]''').click()
 state = str()
 while True:
     try: 
-        state = str(input("What state is the area you are interested in located?  ").title())
+        state = str(input("What STATE contains your area of interest?  ").title())
         selectState = Select(driver.find_element_by_id("state"))
         for option in selectState.options:
             if option.text == state:
@@ -206,7 +190,7 @@ WebDriverWait(driver, 500).until(EC.element_to_be_clickable((By.ID, '''county'''
 county = str()
 while True:
     try:
-        county = str(input("What is the name of the county of interest? ").title())
+        county = str(input("What COUNTY contains your area of interest?  ").title())
         selectCounty = Select(driver.find_element_by_id("county"))
         for option in selectCounty.options:
             if option.text == county:
@@ -679,5 +663,5 @@ shapefile.to_file(outF5, driver='ESRI Shapefile')
 elapsed = (time.time() - start)
 
 print('FINISHED!') 
-print('A shapefile named "GentrificationSusceptibility.shp" can be found in your Downloads folder. It can be viewed using either ESRI ArcGIS or QuantumGIS (QGIS) software.')
-print('The process took '+ str(elapsed) + ' seconds')
+print('A shapefile named "GentrificationSusceptibility.shp" can be found in your Downloads folder. It can be viewed using your preferred visualization or GIS software.')
+print('The process took '+ str(int(elapsed)) + ' seconds')
