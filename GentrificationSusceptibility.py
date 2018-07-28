@@ -51,9 +51,12 @@ while True:
     if dPath.endswith('Downloads') == True:
         break
     if dPath.endswith('Downloads') == False:
-        print ('The provided path does not lead to the "Downloads" folder.')
-        print ('Please try again')
-        continue
+        dPath = dPath + "\Downloads"
+        pass
+        if os.path.exists(dPath) == True:
+            break
+        else:
+            continue
 
 downloadPath = dPath
 
@@ -64,6 +67,7 @@ while True:
         if os.path.exists(cPath) == True:
             pass
         if cPath.endswith('chromedriver.exe') == True:
+            print('Please wait...')
             break
     except:
         pass
@@ -75,13 +79,27 @@ while True:
         print ("Don't forget to include \chromeDriver.exe in the path")
         print ('Please try again')
         continue
+
 chromePath = cPath
 
 driver = webdriver.Chrome(chromePath)
 
+#minimize window
+#driver.set_window_position(-2000,0)
+
 #time how long the code takes
 start = time.time()
+#Delete files in 'Downloads folder
 
+folder = downloadPath
+for the_file in os.listdir(folder):
+    file_path = os.path.join(folder, the_file)
+    try:
+        if os.path.isfile(file_path):
+            os.unlink(file_path)
+        #elif os.path.isdir(file_path): shutil.rmtree(file_path)
+    except Exception as e:
+        print(e)
 #functions making selenium wait for specific circumstances
 
 def smallWait():
@@ -131,9 +149,7 @@ def downloadWait(): #continually checks for 'download' button to be clickable
             pass
         if element_present == False:
             WebDriverWait(driver, timeout).until(element_present)
-        
-    
-print('Please wait...')
+
 
 '''Make driver navigate to American Fact Finder Download Center and download data'''
 
@@ -200,6 +216,16 @@ while True:
         if county != str():
             print ("Invalid input")
 
+    if county.endswith('County') == True:
+        county = county[:-7]
+        pass
+        for option in selectCounty.options:
+            if option.text == county:
+                selectCounty.select_by_visible_text(county)
+                break
+        else:
+            print ("County not recognized. Please try again")
+            continue
     if option.text != county:
         print ("County not recognized. Please try again")
         continue
