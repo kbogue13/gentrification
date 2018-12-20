@@ -94,6 +94,17 @@ chromePath = cPath
 
 driver = webdriver.Chrome(chromePath)
 
+#Delete files in 'Downloads folder
+folder = downloadPath
+for the_file in os.listdir(folder):
+    file_path = os.path.join(folder, the_file)
+    try:
+        if os.path.isfile(file_path):
+            os.unlink(file_path)
+        #elif os.path.isdir(file_path): shutil.rmtree(file_path)
+    except Exception as e:
+        print(e)
+  
 #functions making selenium wait for specific circumstances
 
 def smallWait(): #This is just a general wait of .33 seconds
@@ -238,7 +249,7 @@ WebDriverWait(driver, 500).until(EC.element_to_be_clickable((By.XPATH, '''//*[@i
 driver.find_element_by_xpath('''//*[@id="nextButton"]''').click()
 
 #Enter B19013, B02001, B25071, B25077, B15003  into search bar this is Median Income, Race, Rent as % of Household Income, Median Home Value, and Educational Attainment
-#smallWait()
+
 wait()
 smallWait()
 medWait()
@@ -251,11 +262,12 @@ inputElement.send_keys('B19013, B02001, B25071, B25077, B15003')
 inputElement.send_keys(Keys.ENTER)
 
 #Click 'Check All' button
-#smallWait()
+
 wait()
 medWait()
 WebDriverWait(driver, 500).until(EC.presence_of_element_located((By.XPATH, '''//*[@id="check_all_btn_below"]''')))
 WebDriverWait(driver, 500).until(EC.element_to_be_clickable((By.XPATH, '''//*[@id="check_all_btn_below"]''')))
+smallWait()
 driver.find_element_by_xpath('''//*[@id="check_all_btn_below"]''').click()
 
 #Click 'Next'
@@ -357,11 +369,11 @@ driver.quit()
 pd.options.mode.chained_assignment = None  # default='warn'
 
 #Identify CSVs
-fname = downloadPath + '\ACS_16_5YR_B02001_with_ann.csv' #Race
-fname1 = downloadPath + '\ACS_16_5YR_B19013_with_ann.csv' #Median Income
-fname2 = downloadPath + '\ACS_16_5YR_B25071_with_ann.csv' #Rent as % of MI
-fname3 = downloadPath + '\ACS_16_5YR_B25077_with_ann.csv' #Housing Value
-fname4 = downloadPath + '\ACS_16_5YR_B15003_with_ann.csv' #Educational Attainment
+fname = downloadPath + '\ACS_17_5YR_B02001_with_ann.csv' #Race
+fname1 = downloadPath + '\ACS_17_5YR_B19013_with_ann.csv' #Median Income
+fname2 = downloadPath + '\ACS_17_5YR_B25071_with_ann.csv' #Rent as % of MI
+fname3 = downloadPath + '\ACS_17_5YR_B25077_with_ann.csv' #Housing Value
+fname4 = downloadPath + '\ACS_17_5YR_B15003_with_ann.csv' #Educational Attainment
 
 #RACE
 outF = downloadPath + '\Race.csv'
